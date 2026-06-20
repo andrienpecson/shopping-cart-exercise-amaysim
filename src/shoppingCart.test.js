@@ -23,6 +23,7 @@ function cartWith(adds) {
   return cart;
 }
 
+// Tests for the given scenarios
 describe("ShoppingCart - scenarios from the brief", () => {
   for (const { title, adds, expectedTotal } of SCENARIOS) {
     test(`${title} totals ${expectedTotal}`, () => {
@@ -32,6 +33,7 @@ describe("ShoppingCart - scenarios from the brief", () => {
   }
 });
 
+// Tests for basic cart interaction
 describe("ShoppingCart - basic behaviour", () => {
   test("an empty cart totals 0", () => {
     const cart = new ShoppingCart(buildPricingRules());
@@ -58,6 +60,7 @@ describe("ShoppingCart - basic behaviour", () => {
   });
 });
 
+// Test for the pricing rules
 describe("PricingRules.xForYDeal (3 for 2 on ult_small @ 24.90)", () => {
   test("no discount below the buy threshold", () => {
     const cart = cartWith([["ult_small"], ["ult_small"]]);
