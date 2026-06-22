@@ -85,7 +85,8 @@ export default class PricingRules {
    */
   promoCodeDiscount(code, percent = 0) {
     return (items, promoCode) => {
-      if (promoCode !== code) {
+
+      if (promoCode !== code || (percent > 100 || percent < 0)) {
         return this._formatReturn(0);
       }
 

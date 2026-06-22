@@ -105,3 +105,41 @@ cart.add("ult_large");
 console.log(cart.total); // 94.7
 console.log(cart.items); // grouped paid items followed by any free items
 ```
+
+## Assumptions & Decisions
+
+The brief left some areas open to interpretation. These are the decisions I made
+to resolve that ambiguity:
+
+- **One unit per `add()`, fixed catalogue.** `add(productCode)` adds exactly one
+  unit (no quantity argument), unknown product codes are silently ignored, and
+  the promo code is cart-level (the most recently set value wins) rather than
+  tied to a specific item. The product catalogue in `constants.js` is treated as
+  static.
+
+- **Free bundled items are zero-priced and excluded from further discounts.**
+  Bundle freebies (e.g. the free 1 GB Data-pack with every Unlimited 2GB) are
+  tracked separately and priced at $0, so they are not counted in the subtotal
+  and are not affected by any other pricing rule.
+
+- **Promotions are independent and applied to the subtotal.**
+  Each pricing rule is evaluated separately, and the total discount is summed and
+  deducted from the subtotal.
+
+- **Pricing rules are injected, not hardcoded.** Rules are passed into the cart
+  constructor as an array of functions, so the cart doesn't need to know which
+  rules exist. This keeps the rules "as flexible as possible".
+
+- **⚠️ Known limitation — `cart.items` only reflects free items after
+  `cart.total` is read.** `free_cart_items` is populated as a side effect of the
+  `total` getter, so the total must be computed before the free items appear:
+
+  ```js
+  cart.add('ult_medium');
+  cart.items;  // freebie MISSING — total not computed yet
+  cart.total;  // populates free_cart_items
+  cart.items;  // freebie now appears
+  ```
+
+  The tests and `index.js` always read `.total` before `.items`, which hides
+  this. Until fixed, read `.total` before `.items`.
